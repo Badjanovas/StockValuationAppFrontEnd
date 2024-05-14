@@ -1,0 +1,132 @@
+<app-navbar></app-navbar>
+
+<!-- Button to trigger modal -->
+<div class="text-center my-4">
+  <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#grahamsFormulaModal">
+    Launch Calculator
+  </button>
+</div>
+
+<!-- Graham's Formula Modal -->
+<div class="modal fade" id="grahamsFormulaModal" tabindex="-1" aria-labelledby="grahamsFormulaModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="grahamsFormulaModalLabel">Graham's Formula Calculator</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form #grahamsForm="ngForm" (ngSubmit)="calculateGrahamsValuation(grahamsForm)">
+          <div class="mb-3">
+            <label for="companyName" class="form-label">Company Name</label>
+            <input type="text" class="form-control" id="companyName" name="companyName" [(ngModel)]="grahamsFormulaRequest.companyName" required>
+          </div>
+          <div class="mb-3">
+            <label for="companyTicker" class="form-label">Company Ticker</label>
+            <input type="text" class="form-control" id="companyTicker" name="companyTicker" [(ngModel)]="grahamsFormulaRequest.companyTicker" required>
+          </div>
+          <div class="mb-3">
+            <label for="eps" class="form-label">Earnings Per Share (EPS)</label>
+            <input type="number" class="form-control" id="eps" name="eps" [(ngModel)]="grahamsFormulaRequest.eps" required>
+          </div>
+          <div class="mb-3">
+            <label for="growthRate" class="form-label">Growth Rate (%)</label>
+            <input type="number" class="form-control" id="growthRate" name="growthRate" [(ngModel)]="grahamsFormulaRequest.growthRate" required>
+          </div>
+          <div class="mb-3">
+            <label for="currentYieldOfBonds" class="form-label">Current Yield of Bonds (%)</label>
+            <input type="number" class="form-control" id="currentYieldOfBonds" name="currentYieldOfBonds" [(ngModel)]="grahamsFormulaRequest.currentYieldOfBonds" required>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!grahamsForm.valid">Calculate</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search bar -->
+<div class="container my-4">
+  <form class="d-flex" (submit)="performSearch(); $event.preventDefault()">
+    <div class="input-group">
+      <input type="text" class="form-control me-2" [placeholder]="getPlaceholder()" [(ngModel)]="searchBar" name="searchBar" aria-label="Search by ticker or name">
+      <select class="form-select" name="searchType" [(ngModel)]="searchType" (change)="handleSearchTypeChange()" aria-label="Select search type">
+        <option value="companyName">Company name</option>
+        <option value="ticker">Ticker</option>
+        <option value="date">Date range</option>
+      </select>
+      <button class="btn btn-outline-success" type="submit">Search</button>
+    </div>
+  </form>
+</div>
+
+<!-- Modal for Date Range Selection -->
+<div class="modal fade" id="dateRangeModal" tabindex="-1" aria-labelledby="dateRangeModalLabel" aria-hidden="true" #dateRangeModal>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="dateRangeModalLabel">Select Date Range</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="date" class="form-control mb-2" [(ngModel)]="startDate" name="startDate">
+        <input type="date" class="form-control" [(ngModel)]="endDate" name="endDate">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" (click)="getCalculationsByDate()">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Result table -->
+<div class="container my-4">
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">Creation date</th>
+          <th scope="col">Company name</th>
+          <th scope="col">Stock Ticker</th>
+          <th scope="col">EPS</th>
+          <th scope="col">Growth rate (%)</th>
+          <th scope="col">Yield of bonds (%)</th>
+          <th scope="col">Intrinsic value ($)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="!showAllCalculations; else allCalculations">
+          <tr>
+            <td>{{ grahamsFormulaResponse.creationDate }}</td>
+            <td>{{ grahamsFormulaResponse.companyName }}</td>
+            <td>{{ grahamsFormulaResponse.companyTicker }}</td>
+            <td>{{ grahamsFormulaResponse.eps }}</td>
+            <td>{{ grahamsFormulaResponse.growthRate }}</td>
+            <td>{{ grahamsFormulaResponse.currentYieldOfBonds }}</td>
+            <td>{{ grahamsFormulaResponse.intrinsicValue }}</td>
+          </tr>
+        </ng-container>
+        <ng-template #allCalculations>
+          <tr *ngFor="let calculation of grahamsCalculations">
+            <td>{{ calculation.creationDate }}</td>
+            <td>{{ calculation.companyName }}</td>
+            <td>{{ calculation.companyTicker }}</td>
+            <td>{{ calculation.eps }}</td>
+            <td>{{ calculation.growthRate }}</td>
+            <td>{{ calculation.currentYieldOfBonds }}</td>
+            <td>{{ calculation.intrinsicValue }}</td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="text-center my-4">
+    <button class="btn btn-info" (click)="toggleDisplayMode()">
+      {{ showAllCalculations ? 'Show Only Latest' : 'Show history' }}
+    </button>
+  </div>
+</div>

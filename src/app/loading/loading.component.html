@@ -1,0 +1,10 @@
+<!-- loading.component.html -->
+<ng-container *ngIf="loading$ | async; else noLoading">
+  <div class="spinner-container">
+    <ng-container *ngTemplateOutlet="customLoadingIndicator ? customLoadingIndicator : defaultSpinner"></ng-container>
+  </div>
+</ng-container>
+<ng-template #noLoading></ng-template>
+<ng-template #defaultSpinner>
+  <mat-spinner></mat-spinner> <!-- Ensure Material Components are imported if using this -->
+</ng-template>
