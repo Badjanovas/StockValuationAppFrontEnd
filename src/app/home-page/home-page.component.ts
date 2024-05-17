@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { AppServiceService } from '../service/app-service.service';
 import { LoadingService } from '../service/loading.service';
 import { Router } from '@angular/router';
 import { User } from '../user';
-
+import { UserService } from '../service/user.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 
 
@@ -25,9 +25,9 @@ export class HomePageComponent {
   repeatPassword!: string;
 
   constructor(
-    private appService: AppServiceService,
+    private userService: UserService,
     private loadingService: LoadingService,
-    private router: Router
+    private router: Router,
   ) {}
 
   logIn(form: NgForm): void {
@@ -35,11 +35,12 @@ export class HomePageComponent {
       return
     }
     this.loadingService.loadingOn();
-    this.appService.logInUser(this.user).subscribe({
+    this.userService.logInUser(this.user).subscribe({
       next: () => {
         this.resetModal();
-        this.router.navigate(['/grahamsFormula']);
-        this.loadingService.loadingOff(); 
+        this.router.navigate(['/grahamsFormula']).then(() => {
+          this.loadingService.loadingOff();
+        });      
       },
       error: (error) => {
         this.errorMessage = error.message;
@@ -53,11 +54,12 @@ export class HomePageComponent {
       return;
     }
     this.loadingService.loadingOn();
-    this.appService.registerUser(this.user).subscribe({
+    this.userService.registerUser(this.user).subscribe({
       next: () => {
         this.resetModal();
         this.loadingService.loadingOff();
         window.location.reload();
+        alert('Account created successfully.')
       },
       error: (error) => {
         this.errorMessage = error.message;

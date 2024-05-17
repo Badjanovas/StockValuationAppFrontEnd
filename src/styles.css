@@ -3,3 +3,19 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+.modal-button{
+  background-color: #252524;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 10px;
+  
+  box-shadow: 2px 2px 5px #2f2f30, -2px -2px 5px #494949;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.modal-button:hover{
+  box-shadow: 2px 2px 10px #75777e;
+  transform: scale(1.05);
+}
+

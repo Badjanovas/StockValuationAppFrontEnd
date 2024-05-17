@@ -1,56 +1,20 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
-import { Observable, catchError, map, switchMap, tap, throwError } from 'rxjs';
 import { GrahamsFormulaRequest } from '../dto/grahams-formula-request';
-
+import { Observable, catchError, throwError } from 'rxjs';
 import { GrahamsFormulaResponse } from '../dto/grahams-formula-response';
-import { User } from '../user';
-import { AuthenticationResponse } from '../dto/authentication-response';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AppServiceService {
-
-  
+export class GrahamsFormulaService {
 
   constructor(private http: HttpClient) { }
 
-  public registerUser(user: User): Observable<User>{
-    return this.http.post<User>('http://localhost:8080/api/user/register', user, {
-      headers: { 'Content-Type': 'application/json' },
-      responseType: 'json'
-    }).pipe(
-      catchError((error: HttpErrorResponse) => {
-        const message = error.error.message || 'Server error'; 
-        return throwError(() => new Error(message));
-      })
-    );
-  }
-
-  public logInUser(user: User): Observable<User>{
-    return this.http.post<AuthenticationResponse>('http://localhost:8080/api/user/authenticate', user,{
-      headers: { 'Content-Type': 'application/json' },
-      responseType: 'json'
-    }).pipe(
-      tap(response => {
-        // Assuming the user's ID and the token are always present in the response
-        console.log('User authenticated:', response.user.id);
-        localStorage.setItem('currentUserId', response.user.id!.toString());
-        localStorage.setItem('token', response.token);
-      }),
-      map(response => response.user),
-      catchError((error: HttpErrorResponse) => {
-        const message = error.error?.message || 'Server error';
-        return throwError(() => new Error(message));
-      })
-    );
-  }
-
+  
   public sendGrahamsRequest(grahamsFormula: GrahamsFormulaRequest): Observable<GrahamsFormulaResponse>{
-    const currentUserId = localStorage.getItem('currentUserId'); // Retrieve the current user ID from localStorage
-    const token = localStorage.getItem('token'); // Retrieve the authentication token from localStorage
+    const currentUserId = localStorage.getItem('currentUserId'); 
+    const token = localStorage.getItem('token'); 
 
     if (!currentUserId || !token) {
       console.error('Authentication details missing.');
@@ -59,7 +23,7 @@ export class AppServiceService {
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`  // Include the token in the Authorization header
+      'Authorization': `Bearer ${token}`
     });
     
     return this.http.post<GrahamsFormulaResponse>(`http://localhost:8080/api/grahams/${currentUserId}`, grahamsFormula, {
@@ -115,7 +79,7 @@ export class AppServiceService {
     );
   }
 
-  public getGrahamsValuationsByDate(startDate: string, endDate: string,): Observable<GrahamsFormulaResponse[]>{
+  public getGrahamsValuationsByDate(startDate: string, endDate: string): Observable<GrahamsFormulaResponse[]>{
     const userId = localStorage.getItem('currentUserId');
     const token = localStorage.getItem('token');
 
@@ -134,5 +98,32 @@ export class AppServiceService {
         return throwError(() => new Error(message));
       })
     );
+  }
+
+  public deleteGrahamsValuation(calculationId: number): Observable<any>{
+    const userId = localStorage.getItem('currentUserId');
+    const token = localStorage.getItem('token');
+
+    if (!userId || !token) {
+      return throwError(() => new Error("User not logged in or token missing."));
+    }
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.delete(`http://localhost:8080/api/grahams/${calculationId}/${userId}`, {
+      headers: headers
+    } ).pipe(
+      catchError(this.handleError) 
+    );
+  }
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'An unknown error occurred!';
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+    return throwError(errorMessage);
   }
 }

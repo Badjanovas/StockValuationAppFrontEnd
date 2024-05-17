@@ -1,0 +1,130 @@
+<app-navbar></app-navbar>
+
+<div class="container mt-5 mb-5">
+  <h1> Dividend discound method: <button type="button" class="btn btn-sm modal-button ms-2" data-bs-toggle="modal" data-bs-target="#infoModal">ℹ️</button></h1>
+</div>
+
+<!-- Information Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="infoModalLabel">About Dividend Discount Method (DDM)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>The Dividend Discount Method (DDM) is a valuation method used to estimate the intrinsic value of a company's stock based on the theory that its value is equal to the sum of all of its future dividend payments, discounted back to their present value.</p>
+        <p>The formula is expressed as:</p>
+        <p>Intrinsic Value = D1 / (r - g)</p>
+        <p>Where:</p>
+        <ul>
+          <li><strong>D1</strong>: Dividend expected next year.</li>
+          <li><strong>r</strong>: Cost of equity or required rate of return.</li>
+          <li><strong>g</strong>: Growth rate in dividends.</li>
+        </ul>
+        <p>This model is particularly useful for companies that pay consistent and stable dividends. However, it's important to conduct thorough research and analysis before making investment decisions.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn modal-button" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Button to trigger modal -->
+<div class="container my-4">
+  <button type="button" class="btn btn-secondary " data-bs-toggle="modal" data-bs-target="#dividendDiscountModal">
+    Launch Calculator
+  </button>
+</div>
+
+<!-- Dividend Discount Method Modal -->
+<div class="modal fade" id="dividendDiscountModal" tabindex="-1" aria-labelledby="dividendDiscountModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="dividendDiscountModalLabel">Dividend Discount Method Calculator</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form #dividendDiscountForm="ngForm" (ngSubmit)="calculateDividendDiscountValuation(dividendDiscountForm)" > 
+          <div class="mb-3">
+            <label for="companyName" class="form-label">Company Name</label>
+            <input type="text" class="form-control" id="companyName" name="companyName" [(ngModel)]="dividendDiscountRequest.companyName" required>
+          </div>
+          <div class="mb-3">
+            <label for="ticker" class="form-label">Company Ticker</label>
+            <input type="text" class="form-control" id="companyTicker" name="companyTicker"[(ngModel)]="dividendDiscountRequest.companyTicker"  required>
+          </div>
+          <div class="mb-3">
+            <label for="currentYearsDiv" class="form-label">Current Year's Dividend ($)</label>
+            <input type="number" class="form-control" id="currentYearsDiv" name="currentYearsDiv" [(ngModel)]="dividendDiscountRequest.currentYearsDiv" required>
+          </div>
+          <div class="mb-3">
+            <label for="wacc" class="form-label">WACC (%)</label>
+            <input type="number" class="form-control" id="wacc" name="wacc" [(ngModel)]="dividendDiscountRequest.wacc" required> 
+          </div>
+          <div class="mb-3">
+            <label for="expectedGrowthRate" class="form-label">Expected Growth Rate (%)</label>
+            <input type="number" class="form-control" id="expectedGrowthRate" name="expectedGrowthRate" [(ngModel)]="dividendDiscountRequest.expectedGrowthRate" required> 
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn modal-button" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn modal-button" [disabled]="!dividendDiscountForm.valid" data-bs-dismiss="modal">Calculate</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-search-bar (searchPerformed)="performSearch($event)"></app-search-bar>
+
+<!-- Result table -->
+<div class="container my-4">
+  <div class="table-responsive scrollable-table">
+    <table class="table table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">Creation date</th>
+          <th scope="col">Company name</th>
+          <th scope="col">Stock Ticker</th>
+          <th scope="col">Current Year's Dividend ($)</th>
+          <th scope="col">Next Year's Dividend ($)</th>
+          <th scope="col">WACC (%)</th>
+          <th scope="col">Expected Growth Rate (%)</th>
+          <th scope="col">Intrinsic value ($)</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="!showAllCalculations; else allCalculations">
+          <tr *ngIf="hasData()">
+            <td>{{ dividendDiscountResponse.creationDate }}</td>
+            <td>{{ dividendDiscountResponse.companyName }}</td>
+            <td>{{ dividendDiscountResponse.companyTicker }}</td>
+            <td>{{ dividendDiscountResponse.currentYearsDiv + " $" }}</td>
+            <td>{{ dividendDiscountResponse.valueOfNextYearsDiv + " $" }}</td>
+            <td>{{ dividendDiscountResponse.wacc + " %" }}</td>
+            <td>{{ dividendDiscountResponse.expectedGrowthRate + " %" }}</td>
+            <td><strong>{{ dividendDiscountResponse.intrinsicValue + " $" }}</strong></td>
+            <td><button type="button" class="btn delete-button" (click)="deleteCalculation(dividendDiscountResponse.id!)">Delete</button></td>
+          </tr>
+        </ng-container>
+        <ng-template #allCalculations>
+          <tr *ngFor="let calculation of dividendDiscountCalculations">
+            <td>{{ calculation.creationDate }}</td>
+            <td>{{ calculation.companyName }}</td>
+            <td>{{ calculation.companyTicker }}</td>
+            <td>{{ calculation.currentYearsDiv + " $" }}</td>
+            <td>{{ calculation.valueOfNextYearsDiv + " $" }}</td>
+            <td>{{ calculation.wacc + " %" }}</td>
+            <td>{{ calculation.expectedGrowthRate + " %" }}</td>
+            <td><strong>{{ calculation.intrinsicValue + " $" }}</strong></td>
+            <td><button type="button" class="btn delete-button" (click)="deleteCalculation(calculation.id!)">Delete</button></td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+  </div>
+</div>

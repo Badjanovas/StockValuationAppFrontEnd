@@ -11,6 +11,9 @@ import { LoadingComponent } from './loading/loading.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { GrahamsFormulaComponent } from './grahams-formula/grahams-formula.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { FooterComponent } from './footer/footer.component';
+import { DividendDiscountModelComponent } from './dividend-discount-model/dividend-discount-model.component';
+import { SearchBarComponent } from './search-bar/search-bar.component';
 
 
 
@@ -21,7 +24,10 @@ import { NavbarComponent } from './navbar/navbar.component';
     HomePageComponent,
     LoadingComponent,
     GrahamsFormulaComponent,
-    NavbarComponent
+    NavbarComponent,
+    FooterComponent,
+    DividendDiscountModelComponent,
+    SearchBarComponent
   ],
   imports: [
     BrowserModule,

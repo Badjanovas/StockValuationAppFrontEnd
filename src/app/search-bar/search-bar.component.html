@@ -1,0 +1,34 @@
+<!-- Search bar -->
+<div class="container my-4">
+  <form class="d-flex" (submit)="performSearch(); $event.preventDefault()">
+    <div class="input-group">
+      <input type="text" class="form-control me-2" [placeholder]="getPlaceholder()" [(ngModel)]="searchBar" name="searchBar" aria-label="Search by ticker or name">
+      <select class="form-select" name="searchType" [(ngModel)]="searchType" (change)="handleSearchTypeChange()" aria-label="Select search type">
+        <option value="companyName">Company name</option>
+        <option value="ticker">Ticker</option>
+        <option value="date">Date range</option>
+      </select>
+      <button class="btn btn-secondary" type="submit">Search</button>
+    </div>
+  </form>
+</div>
+
+<!-- Modal for Date Range Selection -->
+<div class="modal fade" id="dateRangeModal" tabindex="-1" aria-labelledby="dateRangeModalLabel" aria-hidden="true" #dateRangeModal>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="dateRangeModalLabel">Select Date Range</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="date" class="form-control mb-2" [(ngModel)]="startDate" name="startDate">
+        <input type="date" class="form-control" [(ngModel)]="endDate" name="endDate">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn modal-button" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn modal-button" data-bs-dismiss="modal" (click)="applyDateRange()">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>

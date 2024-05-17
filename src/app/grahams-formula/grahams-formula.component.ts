@@ -1,28 +1,23 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { GrahamsFormulaRequest } from '../dto/grahams-formula-request';
 import { GrahamsFormulaResponse } from '../dto/grahams-formula-response';
 import { NgForm } from '@angular/forms';
-import { AppServiceService } from '../service/app-service.service';
 import { LoadingService } from '../service/loading.service';
+import { GrahamsFormulaService } from '../service/grahams-formula.service';
 
-declare var bootstrap: any;
+
 
 @Component({
   selector: 'app-grahams-formula',
   templateUrl: './grahams-formula.component.html',
   styleUrl: './grahams-formula.component.css'
 })
-export class GrahamsFormulaComponent implements OnInit {
+export class GrahamsFormulaComponent  {
 
-  @ViewChild('dateRangeModal') dateRangeModal!: ElementRef;
-
-  constructor(private appService: AppServiceService, private loadingService: LoadingService){}
-
-  ngOnInit(): void {
-    if (this.searchBar) {
-      this.performSearch();
-    }
-  }
+  constructor(
+    private grahamsService: GrahamsFormulaService,
+    private loadingService: LoadingService
+  ){}
 
   grahamsFormulaRequest: GrahamsFormulaRequest = {
     companyName: "",
@@ -44,20 +39,35 @@ export class GrahamsFormulaComponent implements OnInit {
 
   grahamsCalculations: GrahamsFormulaResponse[] = [];
   showAllCalculations: boolean = false;
-  searchBar: string = "";
-  searchType: string = "companyName"
-  placeholderText: string = "Search by company name";
   startDate!: string;
   endDate!: string;
+  searchType!: string;
+  searchBar: string = "";
 
 
-  getAllCalculationsByTicker(){
+  deleteCalculation(calculationId: number): void{
+      this.loadingService.loadingOn();
+      this.grahamsService.deleteGrahamsValuation(calculationId).subscribe({
+        next: () => {
+          console.log('Graham\'s valuation deleted successfully');
+          this.grahamsCalculations = this.grahamsCalculations.filter(item => item.id !== calculationId);
+          this.loadingService.loadingOff();
+        },
+      error: (err) => {
+          console.error('Failed to delete Graham\'s valuation:', err);
+          this.loadingService.loadingOff();
+      }
+    });
+  }
+
+  getAllCalculationsByTicker(): void{
     if (this.searchBar.trim()){
       this.loadingService.loadingOn();
-      this.appService.getGrahamsValuationsByTicker(this.searchBar).subscribe({
+      this.grahamsService.getGrahamsValuationsByTicker(this.searchBar).subscribe({
         next: (response) => {
           this.grahamsCalculations = response;
           this.resetSearchBar();
+          this.showAllCalculations = true;
           this.loadingService.loadingOff();
         },
         error: (err) => {
@@ -68,13 +78,14 @@ export class GrahamsFormulaComponent implements OnInit {
     }
   }
 
-  getAllCalculationsByCompanyName(){
+  getAllCalculationsByCompanyName(): void{
     if (this.searchBar.trim()){
       this.loadingService.loadingOn();
-      this.appService.getGrahamsValuationsByCompanyName(this.searchBar).subscribe({
+      this.grahamsService.getGrahamsValuationsByCompanyName(this.searchBar).subscribe({
         next: (response) => {
           this.grahamsCalculations = response;
           this.resetSearchBar();
+          this.showAllCalculations = true;
           this.loadingService.loadingOff();
         },
         error: (err) => {
@@ -85,70 +96,52 @@ export class GrahamsFormulaComponent implements OnInit {
     }
   }
 
-  getCalculationsByDate(): void {
-    if (this.startDate && this.endDate) {
-      this.loadingService.loadingOn();
-      this.appService.getGrahamsValuationsByDate(this.startDate, this.endDate).subscribe({
-        next: (response) => {
-          this.grahamsCalculations = response;
-          this.loadingService.loadingOff();
-        },
-        error: (err) => {
-          console.error('Failed to load valuations:', err);
-          this.loadingService.loadingOff();
-        }
-      });
+  getCalculationsByDate(startDate: string, endDate: string): void {
+    this.loadingService.loadingOn();
+    this.grahamsService.getGrahamsValuationsByDate(startDate, endDate).subscribe({
+      next: (response) => {
+        this.grahamsCalculations = response;
+        this.showAllCalculations = true;
+        this.loadingService.loadingOff();
+      },
+      error: (err) => {
+        console.error('Failed to load valuations:', err);
+        this.loadingService.loadingOff();
+      }
+    });
+  }
+
+  performSearch(event: { searchType: string, searchValue: string, startDate?: string, endDate?: string }): void {
+    if (event.searchType === "ticker") {
+      this.searchBar = event.searchValue;
+      this.getAllCalculationsByTicker();
+    } else if (event.searchType === "companyName"){
+      this.searchBar = event.searchValue;
+      this.getAllCalculationsByCompanyName();
+    } else if (event.searchType === "date" && event.startDate && event.endDate) {
+      this.getCalculationsByDate(event.startDate, event.endDate);
     }
-  }
-
-  handleSearchTypeChange(): void {
-    if (this.searchType === 'date') {
-      this.showModal();
-    } else {
-      this.updatePlaceholder();
-    }
-  }
-
-  showModal(): void {
-    const modalElement = this.dateRangeModal.nativeElement;
-    const modalInstance = new bootstrap.Modal(modalElement);
-    modalInstance.show();
-  }
-
-
-  performSearch() {
-    if (this.searchBar.trim()) {
-      this.loadingService.loadingOn();
-      if (this.searchType === "ticker") {
-        this.getAllCalculationsByTicker();
-      } else if (this.searchType === "companyName"){
-        this.getAllCalculationsByCompanyName();
-      } 
-    }
-  }
-
-  updatePlaceholder(): void{
-    this.placeholderText = this.searchType === "ticker" ? "Search by ticker" : "Search by company name"
-    console.log("Updated placeholder to: ", this.placeholderText);
-  }
-
-  getPlaceholder(): string {
-    return this.placeholderText;
   }
 
   calculateGrahamsValuation(form: NgForm): void {
     this.loadingService.loadingOn();
     if(form.valid){
-        this.appService.sendGrahamsRequest(this.grahamsFormulaRequest).subscribe({
+        this.grahamsService.sendGrahamsRequest(this.grahamsFormulaRequest).subscribe({
           next: (response) => {
             this.grahamsFormulaResponse = response;
-            this.grahamsCalculations.push(response)
+            this.grahamsCalculations.push(response);
+            this.showAllCalculations = false;
             this.resetModal();
             this.loadingService.loadingOff();
+          },
+          error: (err) => { 
+            console.error('Failed to calculate Graham\'s valuation:', err);
+            this.loadingService.loadingOff();
           }
-        })
-      }
+        });
+      } else{
       this.loadingService.loadingOff();
+      }
   }
 
   resetModal(): void{
@@ -165,8 +158,8 @@ export class GrahamsFormulaComponent implements OnInit {
     this.searchBar = "";
   }
 
-  toggleDisplayMode(): void {
-    this.showAllCalculations = !this.showAllCalculations;
+  hasData(): boolean {
+    return this.grahamsFormulaResponse.companyName.trim() !== "" && this.grahamsFormulaResponse.companyName.trim() !== "";
   }
   
 }

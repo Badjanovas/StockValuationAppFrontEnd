@@ -1,8 +1,38 @@
 <app-navbar></app-navbar>
 
+<div class="container mt-5 mb-5">
+  <h1> Graham's Formula: <button type="button" class="btn btn-sm modal-button ms-2" data-bs-toggle="modal" data-bs-target="#infoModal">ℹ️</button></h1>
+</div>
+
+<!-- Information Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="infoModalLabel">About Graham's Formula</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Graham's formula, also known as the Benjamin Graham formula, is a method used to estimate the intrinsic value of a stock based on its earnings per share (EPS) and expected growth rate. The formula is often used by value investors to identify undervalued stocks.</p>
+        <p>The formula is expressed as:</p>
+        <p>Intrinsic Value = (EPS * (7 + Growth rate) * 4.4) / Current yield of AAA bonds</p>
+        <p>Where:</p>
+        <ul>
+          <li><strong>EPS</strong>: Earnings per share of the company.</li>
+          <li><strong>Growth Rate</strong>: Expected annual growth rate of EPS for the next 7-10 years.</li>
+        </ul>
+        <p>The formula provides an estimate of what the stock should be worth based on its fundamentals. However, it's important to conduct thorough research and analysis before making investment decisions.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn modal-button" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Button to trigger modal -->
-<div class="text-center my-4">
-  <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#grahamsFormulaModal">
+<div class="container my-4">
+  <button type="button" class="btn btn-secondary " data-bs-toggle="modal" data-bs-target="#grahamsFormulaModal">
     Launch Calculator
   </button>
 </div>
@@ -38,8 +68,8 @@
             <input type="number" class="form-control" id="currentYieldOfBonds" name="currentYieldOfBonds" [(ngModel)]="grahamsFormulaRequest.currentYieldOfBonds" required>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary" [disabled]="!grahamsForm.valid">Calculate</button>
+            <button type="button" class="btn modal-button" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn modal-button" [disabled]="!grahamsForm.valid" data-bs-dismiss="modal">Calculate</button>
           </div>
         </form>
       </div>
@@ -47,66 +77,35 @@
   </div>
 </div>
 
-<!-- Search bar -->
-<div class="container my-4">
-  <form class="d-flex" (submit)="performSearch(); $event.preventDefault()">
-    <div class="input-group">
-      <input type="text" class="form-control me-2" [placeholder]="getPlaceholder()" [(ngModel)]="searchBar" name="searchBar" aria-label="Search by ticker or name">
-      <select class="form-select" name="searchType" [(ngModel)]="searchType" (change)="handleSearchTypeChange()" aria-label="Select search type">
-        <option value="companyName">Company name</option>
-        <option value="ticker">Ticker</option>
-        <option value="date">Date range</option>
-      </select>
-      <button class="btn btn-outline-success" type="submit">Search</button>
-    </div>
-  </form>
-</div>
-
-<!-- Modal for Date Range Selection -->
-<div class="modal fade" id="dateRangeModal" tabindex="-1" aria-labelledby="dateRangeModalLabel" aria-hidden="true" #dateRangeModal>
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="dateRangeModalLabel">Select Date Range</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <input type="date" class="form-control mb-2" [(ngModel)]="startDate" name="startDate">
-        <input type="date" class="form-control" [(ngModel)]="endDate" name="endDate">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" (click)="getCalculationsByDate()">Apply</button>
-      </div>
-    </div>
-  </div>
-</div>
+<app-search-bar (searchPerformed)="performSearch($event)"></app-search-bar>
 
 <!-- Result table -->
-<div class="container my-4">
-  <div class="table-responsive">
+<div class="container my-4" >
+  <div class="table-responsive scrollable-table">
     <table class="table table-hover">
       <thead class="table-dark">
         <tr>
           <th scope="col">Creation date</th>
           <th scope="col">Company name</th>
           <th scope="col">Stock Ticker</th>
-          <th scope="col">EPS</th>
+          <th scope="col">EPS ($)</th>
           <th scope="col">Growth rate (%)</th>
           <th scope="col">Yield of bonds (%)</th>
           <th scope="col">Intrinsic value ($)</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         <ng-container *ngIf="!showAllCalculations; else allCalculations">
-          <tr>
+          <tr *ngIf="hasData()">
             <td>{{ grahamsFormulaResponse.creationDate }}</td>
             <td>{{ grahamsFormulaResponse.companyName }}</td>
             <td>{{ grahamsFormulaResponse.companyTicker }}</td>
-            <td>{{ grahamsFormulaResponse.eps }}</td>
-            <td>{{ grahamsFormulaResponse.growthRate }}</td>
-            <td>{{ grahamsFormulaResponse.currentYieldOfBonds }}</td>
-            <td>{{ grahamsFormulaResponse.intrinsicValue }}</td>
+            <td>{{ grahamsFormulaResponse.eps + "$" }}</td>
+            <td>{{ grahamsFormulaResponse.growthRate + " %"}}</td>
+            <td>{{ grahamsFormulaResponse.currentYieldOfBonds + " %"}}</td>
+            <td><strong>{{ grahamsFormulaResponse.intrinsicValue + "$" }}</strong></td>
+            <td><button type="button" class="btn delete-button">Delete</button></td>
           </tr>
         </ng-container>
         <ng-template #allCalculations>
@@ -114,19 +113,14 @@
             <td>{{ calculation.creationDate }}</td>
             <td>{{ calculation.companyName }}</td>
             <td>{{ calculation.companyTicker }}</td>
-            <td>{{ calculation.eps }}</td>
-            <td>{{ calculation.growthRate }}</td>
-            <td>{{ calculation.currentYieldOfBonds }}</td>
-            <td>{{ calculation.intrinsicValue }}</td>
+            <td>{{ calculation.eps + " $"}}</td>
+            <td>{{ calculation.growthRate + " %"}}</td>
+            <td>{{ calculation.currentYieldOfBonds + " %" }}</td>
+            <td><strong> {{ calculation.intrinsicValue + " $" }} </strong></td>
+           <td><button type="button" class="btn delete-button" (click)="deleteCalculation(calculation.id!)">Delete</button></td>
           </tr>
         </ng-template>
       </tbody>
     </table>
-  </div>
-
-  <div class="text-center my-4">
-    <button class="btn btn-info" (click)="toggleDisplayMode()">
-      {{ showAllCalculations ? 'Show Only Latest' : 'Show history' }}
-    </button>
   </div>
 </div>
