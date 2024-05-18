@@ -1,0 +1,145 @@
+<app-navbar></app-navbar>
+
+<div class="container mt-5 mb-5">
+  <h1> Discounted cash flow: <button type="button" class="btn btn-sm modal-button ms-2" data-bs-toggle="modal" data-bs-target="#infoModal">ℹ️</button></h1>
+</div>
+
+<!-- Information Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="infoModalLabel">About Discounted Cash Flow (DCF) Method</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>The Discounted Cash Flow (DCF) method is a valuation technique used to estimate the intrinsic value of a company based on its expected future cash flows. These cash flows are projected and then discounted back to their present value using the company's weighted average cost of capital (WACC).</p>
+        <p>The formula is expressed as:</p>
+        <p>Intrinsic Value = CF1 / (1 + r)^1 + CF2 / (1 + r)^2 + ... + CFn / (1 + r)^n + TV / (1 + r)^n</p>
+        <p>Where:</p>
+        <ul>
+          <li><strong>CFn</strong>: Cash flow in year n.</li>
+          <li><strong>r</strong>: Discount rate (WACC).</li>
+          <li><strong>TV</strong>: Terminal value, representing the value of all cash flows beyond the forecast period.</li>
+        </ul>
+        <p>The DCF method is widely used because it accounts for the time value of money and provides a detailed understanding of a company's financial performance and potential. However, it requires accurate forecasting and careful consideration of the discount rate.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn modal-button" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Button to trigger modal -->
+<div class="container my-4">
+  <button type="button" class="btn btn-secondary " data-bs-toggle="modal" data-bs-target="#dcfModal">
+    Launch Calculator
+  </button>
+</div>
+
+<!-- Discounted Cash Flow Method Modal -->
+<div class="modal fade" id="dcfModal" tabindex="-1" aria-labelledby="dcfModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="dcfModalLabel">Discounted Cash Flow Method Calculator</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form #dcfForm="ngForm" (ngSubmit)="calculateDcfValuation(dcfForm)">
+          <div class="mb-3">
+            <label for="companyName" class="form-label">Company Name</label>
+            <input type="text" class="form-control" id="companyName" name="companyName" [(ngModel)]="dcfRequest.companyName" required> 
+          </div>
+          <div class="mb-3">
+            <label for="ticker" class="form-label">Company Ticker</label>
+            <input type="text" class="form-control" id="companyTicker" name="companyTicker" [(ngModel)]="dcfRequest.companyTicker" required>
+          </div>
+          <div class="mb-3">
+            <label for="sumOfFCF" class="form-label">Sum of Free Cash Flows ($ last 5 years)</label>
+            <input type="number" class="form-control" id="sumOfFCF" name="sumOfFCF" [(ngModel)]="dcfRequest.sumOfFCF" required>
+          </div>
+          <div class="mb-3">
+            <label for="cashAndCashEquivalents" class="form-label">Cash and Cash Equivalents ($)</label>
+            <input type="number" class="form-control" id="cashAndCashEquivalents" name="cashAndCashEquivalents" [(ngModel)]="dcfRequest.cashAndCashEquivalents" required>
+          </div>
+          <div class="mb-3">
+            <label for="totalDebt" class="form-label">Total Debt ($)</label>
+            <input type="number" class="form-control" id="totalDebt" name="totalDebt" [(ngModel)]="dcfRequest.totalDebt" required>
+          </div>
+          <div class="mb-3">
+            <label for="sharesOutstanding" class="form-label">Shares Outstanding</label>
+            <input type="number" class="form-control" id="sharesOutstanding" name="sharesOutstanding" [(ngModel)]="dcfRequest.sharesOutstanding" required> 
+          </div>
+          <div class="mb-3">
+            <label for="wacc" class="form-label">Wacc(%)</label>
+            <input type="number" class="form-control" id="wacc" name="wacc" [(ngModel)]="dcfRequest.wacc" required> 
+          </div>
+          <div class="mb-3">
+            <label for="growthRate" class="form-label">Growth Rate (%)</label>
+            <input type="number" class="form-control" id="growthRate" name="growthRate" [(ngModel)]="dcfRequest.growthRate" required> 
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn modal-button" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn modal-button" [disabled]="!dcfForm.valid" data-bs-dismiss="modal">Calculate</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-search-bar (searchPerformed)="performSearch($event)"></app-search-bar>
+
+<!-- Result table -->
+<div class="container my-4">
+  <div class="table-responsive scrollable-table">
+    <table class="table table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">Creation date</th>
+          <th scope="col">Company name</th>
+          <th scope="col">Stock Ticker</th>
+          <th scope="col">Sum of Free Cash Flows ($/milions)</th>
+          <th scope="col">Cash and Cash Equivalents ($/milions)</th>
+          <th scope="col">Total Debt ($/milions)</th>
+          <th scope="col">Equity Value ($/milions)</th>
+          <th scope="col">Shares Outstanding (milions)</th>
+          <th scope="col">Intrinsic value ($)</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="!showAllCalculations; else allCalculations">
+          <tr *ngIf="hasData()">
+            <td>{{ dcfResponse.creationDate }}</td>
+            <td>{{ dcfResponse.companyName }}</td>
+            <td>{{ dcfResponse.companyTicker }}</td>
+            <td>{{ dcfResponse.sumOfFCF + " $" }}</td>
+            <td>{{ dcfResponse.cashAndCashEquivalents + " $" }}</td>
+            <td>{{ dcfResponse.totalDebt + " $" }}</td>
+            <td>{{ dcfResponse.equityValue + " $" }}</td>
+            <td>{{ dcfResponse.sharesOutstanding }}</td>
+            <td><strong>{{ dcfResponse.intrinsicValue + " $" }}</strong></td>
+            <td><button type="button" class="btn delete-button" (click)="deleteCalculation(dcfResponse.id!)">Delete</button></td>
+          </tr>
+        </ng-container>
+        <ng-template #allCalculations>
+          <tr *ngFor="let calculation of dcfCalculations">
+            <td>{{ calculation.creationDate }}</td>
+            <td>{{ calculation.companyName }}</td>
+            <td>{{ calculation.companyTicker }}</td>
+            <td>{{ calculation.sumOfFCF + " $" }}</td>
+            <td>{{ calculation.cashAndCashEquivalents + " $" }}</td>
+            <td>{{ calculation.totalDebt + " $" }}</td>
+            <td>{{ calculation.equityValue + " $" }}</td>
+            <td>{{ calculation.sharesOutstanding }}</td>
+            <td><strong>{{ calculation.intrinsicValue + " $" }}</strong></td>
+            <td><button type="button" class="btn delete-button" (click)="deleteCalculation(calculation.id!)">Delete</button></td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -35,4 +35,11 @@ export class NavbarComponent {
     })
   }
 
+  navigateToDiscountedCashFlowPage(): void{
+    this.loadingService.loadingOn();
+    this.router.navigate(['discountedCashFlow']).then(() => {
+      this.loadingService.loadingOff();
+    });  
+  }
+
 }

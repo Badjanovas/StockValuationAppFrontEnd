@@ -49,11 +49,11 @@ export class GrahamsFormulaComponent  {
       this.loadingService.loadingOn();
       this.grahamsService.deleteGrahamsValuation(calculationId).subscribe({
         next: () => {
-          console.log('Graham\'s valuation deleted successfully');
           this.grahamsCalculations = this.grahamsCalculations.filter(item => item.id !== calculationId);
+          this.resetGrahamsFormulaResponse();
           this.loadingService.loadingOff();
         },
-      error: (err) => {
+        error: (err) => {
           console.error('Failed to delete Graham\'s valuation:', err);
           this.loadingService.loadingOff();
       }
@@ -154,12 +154,24 @@ export class GrahamsFormulaComponent  {
     }
   }
 
+  resetGrahamsFormulaResponse(): void{
+   this.grahamsFormulaResponse = {
+    creationDate: new Date(),
+    companyName: "",
+    companyTicker: "",
+    eps: 0,
+    growthRate: 0,
+    currentYieldOfBonds: 0,
+    intrinsicValue: 0
+   }
+  }
+
   resetSearchBar(): void {
     this.searchBar = "";
   }
 
   hasData(): boolean {
-    return this.grahamsFormulaResponse.companyName.trim() !== "" && this.grahamsFormulaResponse.companyName.trim() !== "";
+    return this.grahamsFormulaResponse.companyName.trim() !== "" && this.grahamsFormulaResponse.companyTicker.trim() !== "";
   }
   
 }

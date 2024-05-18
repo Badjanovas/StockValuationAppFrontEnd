@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomePageComponent } from './home-page/home-page.component';
 import { GrahamsFormulaComponent } from './grahams-formula/grahams-formula.component';
 import { DividendDiscountModelComponent } from './dividend-discount-model/dividend-discount-model.component';
+import { DiscountedCashFlowComponent } from './discounted-cash-flow/discounted-cash-flow.component';
 
 
 const routes: Routes = [
@@ -17,6 +18,10 @@ const routes: Routes = [
 {
   path: 'dividendDiscountModel',
   component: DividendDiscountModelComponent
+},
+{
+  path: 'discountedCashFlow',
+  component: DiscountedCashFlowComponent
 }
 
 ];

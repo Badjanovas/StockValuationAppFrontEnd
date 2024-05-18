@@ -33,7 +33,7 @@ export class DividendDiscountModelComponent {
     valueOfNextYearsDiv: 0,
     wacc: 0,
     expectedGrowthRate: 0,
-    intrinsicValue: 0,
+    intrinsicValue: 0
   }
 
   dividendDiscountCalculations: DividendDiscountResponse[] = [];
@@ -43,11 +43,8 @@ export class DividendDiscountModelComponent {
   searchType!: string;
   searchBar: string = "";
 
-  deleteCalculation(calculationId: number): void {
 
-  }
-
-  getAllCalculationsByTicker(): void{
+  getCalculationsByTicker(): void{
     if (this.searchBar.trim()){
       this.loadingService.loadingOn();
       this.dividendDiscountService.getDividendDiscountValuationsByTicker(this.searchBar).subscribe({
@@ -65,7 +62,7 @@ export class DividendDiscountModelComponent {
     }
   }
 
-  getAllCalculationsByCompanyName(): void{
+  getCalculationsByCompanyName(): void{
     if (this.searchBar.trim()){
       this.loadingService.loadingOn();
       this.dividendDiscountService.getDividendDiscountValuationsByCompanyName(this.searchBar).subscribe({
@@ -121,6 +118,21 @@ export class DividendDiscountModelComponent {
     }
   }
 
+  deleteCalculation(calculationId: number): void{
+    this.loadingService.loadingOn();
+      this.dividendDiscountService.deleteDividendDiscountValuation(calculationId).subscribe({
+        next: () => {
+          this.dividendDiscountCalculations = this.dividendDiscountCalculations.filter(item => item.id !== calculationId);
+          this.resetDividendDiscountResponse();
+          this.loadingService.loadingOff();
+        },
+      error: (err) => {
+          console.error('Failed to delete dividend discount valuation:', err);
+          this.loadingService.loadingOff();
+      }
+    });
+  }
+
   resetModal(): void{
     this.dividendDiscountRequest = { 
     companyName: "",
@@ -131,8 +143,21 @@ export class DividendDiscountModelComponent {
     }
   }
 
+  resetDividendDiscountResponse(): void{
+    this.dividendDiscountResponse = {
+    creationDate: new Date(),
+    companyName: "",
+    companyTicker: "",
+    currentYearsDiv: 0,
+    valueOfNextYearsDiv: 0,
+    wacc: 0,
+    expectedGrowthRate: 0,
+    intrinsicValue: 0
+    }
+  }
+
   hasData(): boolean {
-    return this.dividendDiscountResponse.companyName.trim() !== "" && this.dividendDiscountResponse.companyName.trim() !== "";
+    return this.dividendDiscountResponse.companyName.trim() !== "" && this.dividendDiscountResponse.companyTicker.trim() !== "";
   }
 
   resetSearchBar(): void {
@@ -142,10 +167,10 @@ export class DividendDiscountModelComponent {
   performSearch(event: { searchType: string, searchValue: string, startDate?: string, endDate?: string }): void {
     if (event.searchType === "ticker") {
       this.searchBar = event.searchValue;
-      this.getAllCalculationsByTicker();
+      this.getCalculationsByTicker();
     } else if (event.searchType === "companyName"){
       this.searchBar = event.searchValue;
-      this.getAllCalculationsByCompanyName();
+      this.getCalculationsByCompanyName();
     } else if (event.searchType === "date" && event.startDate && event.endDate) {
       this.getCalculationsByDate(event.startDate, event.endDate);
     }

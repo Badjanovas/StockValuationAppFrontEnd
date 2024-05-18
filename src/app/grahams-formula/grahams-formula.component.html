@@ -105,7 +105,7 @@
             <td>{{ grahamsFormulaResponse.growthRate + " %"}}</td>
             <td>{{ grahamsFormulaResponse.currentYieldOfBonds + " %"}}</td>
             <td><strong>{{ grahamsFormulaResponse.intrinsicValue + "$" }}</strong></td>
-            <td><button type="button" class="btn delete-button">Delete</button></td>
+            <td><button type="button" class="btn delete-button" (click)="deleteCalculation(grahamsFormulaResponse.id!)">Delete</button></td>
           </tr>
         </ng-container>
         <ng-template #allCalculations>

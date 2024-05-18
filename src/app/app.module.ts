@@ -14,6 +14,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { FooterComponent } from './footer/footer.component';
 import { DividendDiscountModelComponent } from './dividend-discount-model/dividend-discount-model.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
+import { DiscountedCashFlowComponent } from './discounted-cash-flow/discounted-cash-flow.component';
 
 
 
@@ -27,7 +28,8 @@ import { SearchBarComponent } from './search-bar/search-bar.component';
     NavbarComponent,
     FooterComponent,
     DividendDiscountModelComponent,
-    SearchBarComponent
+    SearchBarComponent,
+    DiscountedCashFlowComponent
   ],
   imports: [
     BrowserModule,

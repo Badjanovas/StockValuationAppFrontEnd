@@ -1,0 +1,12 @@
+.delete-button{
+  background-color: #2b0101;
+  font-size: 12px;
+}
+.delete-button:hover{
+  background-color: #570303;
+}
+
+.scrollable-table {
+  max-height: 400px; /* Adjust this height as needed */
+  overflow-y: auto;
+}
