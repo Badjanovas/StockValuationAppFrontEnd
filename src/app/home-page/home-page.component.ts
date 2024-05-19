@@ -40,6 +40,7 @@ export class HomePageComponent {
         this.resetModal();
         this.router.navigate(['/grahamsFormula']).then(() => {
           this.loadingService.loadingOff();
+          window.location.reload();
         });      
       },
       error: (error) => {
