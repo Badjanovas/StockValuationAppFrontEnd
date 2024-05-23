@@ -1,4 +1,10 @@
-
+.background{
+  background-image: url('/assets/blended_image_50_opacity.webp');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: cover;
+}
 
 .backend-error{
   font-size: 10px;

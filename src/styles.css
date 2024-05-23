@@ -18,11 +18,5 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   box-shadow: 2px 2px 10px #75777e;
   transform: scale(1.05);
 }
-.background{
-  background-image: url('/assets/blended_image_50_opacity.webp');
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-attachment: fixed;
-  background-size: cover;
-}
+
 
