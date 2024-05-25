@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { LoadingComponent } from './loading/loading.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -19,28 +19,22 @@ import { DiscountedCashFlowComponent } from './discounted-cash-flow/discounted-c
 
 
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    HomePageComponent,
-    LoadingComponent,
-    GrahamsFormulaComponent,
-    NavbarComponent,
-    FooterComponent,
-    DividendDiscountModelComponent,
-    SearchBarComponent,
-    DiscountedCashFlowComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    HttpClientModule,
-    MatProgressSpinnerModule
-  ],
-  providers: [
-    provideAnimationsAsync()
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        HomePageComponent,
+        LoadingComponent,
+        GrahamsFormulaComponent,
+        NavbarComponent,
+        FooterComponent,
+        DividendDiscountModelComponent,
+        SearchBarComponent,
+        DiscountedCashFlowComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        MatProgressSpinnerModule], providers: [
+        provideAnimationsAsync(),
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }
