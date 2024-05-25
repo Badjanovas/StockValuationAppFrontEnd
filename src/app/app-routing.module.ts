@@ -8,7 +8,7 @@ import { DiscountedCashFlowComponent } from './discounted-cash-flow/discounted-c
 
 const routes: Routes = [
 {
-  path: 'home',
+  path: '',
   component: HomePageComponent
 },
 {
