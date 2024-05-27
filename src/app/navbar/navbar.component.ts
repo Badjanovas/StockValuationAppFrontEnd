@@ -30,7 +30,7 @@ export class NavbarComponent {
 
   navigateToHomePage(): void{
     this.loadingService.loadingOn();
-    this.router.navigate(['/']).then(() => {
+    this.router.navigate(['/homePageComponent']).then(() => {
       this.loadingService.loadingOff();
     })
   }

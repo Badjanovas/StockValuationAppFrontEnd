@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 
-<div class="container mt-5 mb-5">
+<div class="container mt-5 mb-5 padding">
   <h1> Dividend discound method: <button type="button" class="btn btn-sm modal-button ms-2" data-bs-toggle="modal" data-bs-target="#infoModal">ℹ️</button></h1>
 </div>
 
@@ -128,3 +128,6 @@
     </table>
   </div>
 </div>
+
+<app-chart [dividendDiscountCalculations]="dividendDiscountCalculations"></app-chart>
+<app-appfooter></app-appfooter>

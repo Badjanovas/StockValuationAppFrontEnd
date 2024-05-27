@@ -14,7 +14,7 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   public registerUser(user: User): Observable<User>{
-    return this.http.post<User>('http://ec2-13-40-57-109.eu-west-2.compute.amazonaws.com/api/user/register', user, {
+    return this.http.post<User>('http://localhost:8080/api/user/register', user, {
       headers: { 'Content-Type': 'application/json' },
       responseType: 'json'
     }).pipe(
@@ -26,7 +26,7 @@ export class UserService {
   }
 
   public logInUser(user: User): Observable<User>{
-    return this.http.post<AuthenticationResponse>('http://ec2-13-40-57-109.eu-west-2.compute.amazonaws.com/api/user/authenticate', user,{
+    return this.http.post<AuthenticationResponse>('http://localhost:8080/api/user/authenticate', user,{
       headers: { 'Content-Type': 'application/json' },
       responseType: 'json'
     }).pipe(

@@ -1,0 +1,83 @@
+<div class="background">
+  <div class="container vh-100 d-flex align-items-center justify-content-center ">
+      <div class="text-center">
+        <h1 class="display-4 mt-5">Stock Valuation App</h1>
+        <p class="lead">Optimize your investment decisions with our Stock Valuation App. This intuitive platform allows users to analyze stock value using three sophisticated methods: the Discounted Cash Flow (DCF), Dividend Discount Method (DDM), and Graham's Formula. Tailored for investors who seek a comprehensive understanding of intrinsic stock values, our tool helps you make informed choices by providing clear, data-driven insights. Start navigating the complexities of stock valuation with confidence today.</p>
+        <button class="btn btn-secondary home-page-button" data-bs-toggle="modal" data-bs-target="#loginModal">Log in</button>
+        <button class="btn btn-secondary ms-3 home-page-button" data-bs-toggle="modal" data-bs-target="#registrationModal">Register</button>
+        
+      </div>
+    </div>
+  </div>
+  
+  <!-- Register modal-->
+  <div class="modal fade" *ngIf="showModal" id="registrationModal" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="registrationModalLabel">Create an account</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="resetModal()"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Form Content -->
+            <form class="mx-1 mx-md-4" #registerForm="ngForm" (ngSubmit)="register(registerForm)">
+              <div *ngIf="errorMessage" class="backend-error">
+                  {{ errorMessage }}
+                </div>
+              <div class="d-flex flex-row align-items-center mb-4">
+                <i class="fas fa-user fa-xl me-3 fa-fw"></i>
+                  <input type="text" id="userName" class="form-control" placeholder="User name"  required [(ngModel)]="user.userName" name="userName"/>
+              </div>
+              <div class="d-flex flex-row align-items-center mb-4">
+                <i class="fas fa-envelope fa-xl me-3 fa-fw"></i>
+                  <input type="email" id="email" class="form-control" placeholder="Email" required [(ngModel)]="user.email" name="email"/>
+              </div>
+              <div class="d-flex flex-row align-items-center mb-4">
+                <i class="fas fa-lock fa-xl me-3 fa-fw"></i>
+                  <input type="password" id="password" class="form-control" placeholder="Password" required [(ngModel)]="user.password" name="password" />
+              </div>
+              <div class="d-flex flex-row align-items-center mb-4">
+                <i class="fas fa-key fa-xl me-3 fa-fw"></i>
+                  <input type="password" id="form3Example4cd" class="form-control" placeholder="Repeat password" required [(ngModel)]="repeatPassword" name="repeatPassword"/>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn modal-button" data-bs-dismiss="modal" (click)="resetModal()">Close</button>
+                  <button type="submit" class="btn modal-button">Register</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loginModalLabel">Login to Your Account</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="resetModal()"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Form Content -->
+            <form class="mx-1 mx-md-4" #logInForm="ngForm" (ngSubmit)="logIn(logInForm)">
+              <div *ngIf="errorMessage" class="backend-error">
+                  {{ errorMessage }}
+                </div>
+              <div class="d-flex flex-row align-items-center mb-4">
+                  <i class="fas fa-user fa-xl me-3 fa-fw"></i>
+                  <input type="userName" id="loginUserName" class="form-control" placeholder="User name" required [(ngModel)]="user.userName" name="userName"/>
+              </div>
+              <div class="d-flex flex-row align-items-center mb-4">
+                <i class="fas fa-lock fa-xl me-3 fa-fw"></i>
+                  <input type="password" id="loginPassword" class="form-control" placeholder="Password" required [(ngModel)]="user.password" name="password" />
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn modal-button" data-bs-dismiss="modal" (click)="resetModal()">Close</button>
+                  <button type="submit" class="btn modal-button">Log In</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>

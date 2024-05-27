@@ -10,3 +10,6 @@
   max-height: 400px; /* Adjust this height as needed */
   overflow-y: auto;
 }
+.padding{
+  padding-top: 1.5rem;
+}

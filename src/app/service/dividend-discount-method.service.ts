@@ -15,7 +15,7 @@ export class DividendDiscountMethodService {
     private authService: AuthService
   ) { }
 
-  private url = 'http://ec2-13-40-57-109.eu-west-2.compute.amazonaws.com/api/dividendDiscount';
+  private url = 'http://localhost:8080/api/dividendDiscount';
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     const errorMessage = error.error.message || 'Server error';
