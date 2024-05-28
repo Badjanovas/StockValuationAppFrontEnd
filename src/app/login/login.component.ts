@@ -38,7 +38,8 @@ export class LoginComponent {
         this.resetModal();
         this.router.navigate(['/homePageComponent']).then(() => {
           this.loadingService.loadingOff();
-        });      
+        });
+        window.location.reload();      
       },
       error: (error) => {
         this.errorMessage = error.message;
@@ -56,7 +57,6 @@ export class LoginComponent {
       next: () => {
         this.resetModal();
         this.loadingService.loadingOff();
-        window.location.reload();
         alert('Account created successfully.')
       },
       error: (error) => {
