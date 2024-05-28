@@ -34,7 +34,6 @@ export class UserService {
         console.log('User authenticated:', response.user.id);
         localStorage.setItem('currentUserId', response.user.id!.toString());
         localStorage.setItem('token', response.token);
-        window.location.reload();
       }),
       map(response => response.user),
       catchError((error: HttpErrorResponse) => {
