@@ -38,8 +38,8 @@ export class LoginComponent {
         this.resetModal();
         this.router.navigate(['/homePageComponent']).then(() => {
           this.loadingService.loadingOff();
+          window.location.reload(); 
         });
-        window.location.reload();      
       },
       error: (error) => {
         this.errorMessage = error.message;
