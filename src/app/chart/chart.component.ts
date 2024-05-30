@@ -37,8 +37,41 @@ export class ChartComponent implements OnChanges {
   public chartOptions: ChartOptions;
 
   constructor() {
-    this.chartOptions = {
-      series: [],
+    this.chartOptions = this.getNewChartOptions([]);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['grahamsCalculations'] && changes['grahamsCalculations'].currentValue) {
+      this.updateChart(this.grahamsCalculations);
+    } else if (changes['dividendDiscountCalculations'] && changes['dividendDiscountCalculations'].currentValue) {
+      this.updateChart(this.dividendDiscountCalculations);
+    } else if (changes['dcfCalculations'] && changes['dcfCalculations'].currentValue) {
+      this.updateChart(this.dcfCalculations);
+    }
+  }
+
+  updateChart(data: { creationDate: Date, intrinsicValue: number, companyName: string }[]): void {
+    const seriesData = data.map((item) => ({
+      x: item.companyName,
+      y: item.intrinsicValue,
+      creationDate: item.creationDate
+    }));
+
+    seriesData.sort((a, b) => a.x.localeCompare(b.x));
+
+    const maxIntrinsicValue = Math.max(...data.map(item => item.intrinsicValue));
+
+    this.chartOptions = this.getNewChartOptions(seriesData, maxIntrinsicValue);
+  }
+
+  getNewChartOptions(seriesData: any[], maxIntrinsicValue?: number): ChartOptions {
+    return {
+      series: [
+        {
+          name: "Intrinsic Value",
+          data: seriesData
+        }
+      ],
       chart: {
         type: "bar",
         height: 350
@@ -66,7 +99,7 @@ export class ChartComponent implements OnChanges {
         }
       },
       xaxis: {
-        categories: [],
+        categories: seriesData.map(item => item.x),
         labels: {
           rotate: -45,
           style: {
@@ -97,6 +130,8 @@ export class ChartComponent implements OnChanges {
         }
       },
       yaxis: {
+        min: 0,
+        max: maxIntrinsicValue, // Set the maximum value of the y-axis dynamically
         axisBorder: {
           show: false
         },
@@ -129,34 +164,5 @@ export class ChartComponent implements OnChanges {
         }
       }
     };
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['grahamsCalculations'] && changes['grahamsCalculations'].currentValue) {
-      this.updateChart(this.grahamsCalculations);
-    } else if (changes['dividendDiscountCalculations'] && changes['dividendDiscountCalculations'].currentValue) {
-      this.updateChart(this.dividendDiscountCalculations);
-    } else if (changes['dcfCalculations'] && changes['dcfCalculations'].currentValue) {
-      this.updateChart(this.dcfCalculations);
-    }
-  }
-
-  updateChart(data: { creationDate: Date, intrinsicValue: number, companyName: string }[]): void {
-    const seriesData = data.map((item) => ({
-      x: item.companyName,
-      y: item.intrinsicValue,
-      creationDate: item.creationDate
-    }));
-
-    seriesData.sort((a, b) => a.x.localeCompare(b.x));
-
-    this.chartOptions.series = [
-      {
-        name: "Intrinsic Value",
-        data: seriesData
-      }
-    ];
-
-    this.chartOptions.xaxis.categories = seriesData.map(item => item.x);
   }
 }
